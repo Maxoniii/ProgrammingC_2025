@@ -1,33 +1,19 @@
 #include <iostream>
 
-
 int main() {
-    int N;
+    int x;
 
-    
-    std::cout << "Input number of product (1-5): ";
-    std::cin >> N;
+    std::cout << "Input x (-1 or 1): ";
+    std::cin >> x;
 
-    
-    switch (N) {
-    case 1:
-        std::cout << "Milk" << std::endl;
-        break;
-    case 2:
-        std::cout << "Bread" << std::endl;
-        break;
-    case 3:
-        std::cout << "Meat" << std::endl;
-        break;
-    case 4:
-        std::cout << "Apples" << std::endl;
-        break;
-    case 5:
-        std::cout << "Candles" << std::endl;
-        break;
-    default:
-        std::cout << "Error: number of product " << N << " not found!" << std::endl;
-        break;
+    if (x == -1) {
+        std::cout << "Negative number" << std::endl;
+    }
+    else if (x == 1) {
+        std::cout << "Positive number" << std::endl;
+    }
+    else {
+        std::cout << "Error: x must be 1 or -1!" << std::endl;
     }
 
     return 0;
