@@ -10,8 +10,8 @@ int main() {
     std::cin >> i;
 
 
-    int mask = ~(1 << i);
-    x = x & mask;
+    int m = ~(1 << i);
+    x = x & m;
 
     std::cout << "Result: " << x << std::endl;
 
