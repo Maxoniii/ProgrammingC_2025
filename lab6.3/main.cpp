@@ -1,50 +1,41 @@
-#include <iostream>
-#include <cmath>
-
-
+#include <iostream>;
 int main() {
-    double num;
-    double min_num = 0.0;
-    double res = 1.0;
-    int min_index = 0;
-    int count = 0;
-    int n;
-    std::cout << "Input amount of numbers: " << std::endl;
-    std::cin >> n;
-    std::cout << "Input numders: " << std::endl;
-    for (int i = 0; i < n; i++) {
-        std::cin >> num;
-        if ((num < 0) && (num != int(num))) {
-            count += 1;
+	int i, j, n, m, matrix[100][100];
+	std::cout << "Input size of matrix:" << std::endl;
+	std::cin >> n;
+	std::cin >> m;
+	std::cout << "Input values of matrix:" << std::endl;
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < m; j++) {
+			std::cin >> matrix[i][j];
+		}
+	}
+	int maxAbsSum = 0;
+	int maxAbsSumValue = 0;
+	for (int j = 0; j < m; j++) {
+		maxAbsSum += abs(matrix[0][j]);
+	}
 
-            if (count == 1) {
-                min_num == num;
-                min_index = i;
-                res = num;
-            }
-            else {
-                res *= num;
-
-                if (num < min_num) {
-                    min_num = num;
-                    min_index = i;
-
-                }
-            }
-        }
-    }
-    std::cout << "Multiplication of numbers: " << res << std::endl;
-    std::cout << "Minimum of number:" << min_num << std::endl;
-    std::cout << "Minimum of index: " << min_index << std::endl;
-
-
-
-
-
-
-
-
-
-
-    return 0;
+	for (int i = 0; i < n; i++) {
+		int currentAbsSum = 0;
+		for (int j = 0; j < m; j++) {
+			currentAbsSum += abs(matrix[i][j]);
+		}
+		if (currentAbsSum > maxAbsSum) {
+			maxAbsSum = currentAbsSum;
+			maxAbsSumValue = i;
+		}
+	}
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			matrix[maxAbsSumValue][j] = 9999;
+		}
+	}
+	for (i = 0; i < n; i++) {
+		for (j = 0; j < n; j++) {
+			std::cout << matrix[i][j] << "\t";
+		}
+		std::cout << std::endl;
+	}
+	return 0;
 }
