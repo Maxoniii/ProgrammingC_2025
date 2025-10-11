@@ -1,50 +1,62 @@
 #include <iostream>
-#include <cmath>
-
-
 int main() {
-    double num;
-    double min_num = 0.0;
-    double res = 1.0;
-    int min_index = 0;
-    int count = 0;
     int n;
-    std::cout << "Input amount of numbers: " << std::endl;
+    int sum = 0;
+    int digits[1000];
+    std::cout << "Input  n - posledovatelnost" << std::endl;
     std::cin >> n;
-    std::cout << "Input numders: " << std::endl;
     for (int i = 0; i < n; i++) {
-        std::cin >> num;
-        if ((num < 0) && (num != int(num))) {
-            count += 1;
+        std::cin >> digits[i];
+        if (digits[i] <= 0 || digits[i] > 1000) {
+            std::cout << "Incorrect value" << std::endl;
+        }
+    }
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (digits[i] > digits[j]) {
+                int sum1 = 0;
+                int ex1 = digits[j];
+                while (ex1 > 0) {
+                    sum1 += ex1 % 10;
+                    ex1 /= 10;
+                }
+                int sum2 = 0;
+                int ex2 = digits[j + 1];
+                while (ex2 > 0) {
+                    sum2 += ex2 % 10;
+                    ex2 /= 10;
+                }
+                int one1 = digits[j];
+                while (one1 >= 10) {
+                    one1 /= 10;
+                }
+                int one2 = digits[j + 1];
+                while (one2 >= 10) {
+                    one2 /= 10;
+                }
+                bool swap = false;
 
-            if (count == 1) {
-                min_num == num;
-                min_index = i;
-                res = num;
-            }
-            else {
-                res *= num;
-
-                if (num < min_num) {
-                    min_num = num;
-                    min_index = i;
-
+                if (sum1 > sum2) {
+                    swap = true;
+                }
+                if (one1 > one2) {
+                    swap = true;
+                }
+                else if (sum1 == sum2 && one1 == one2) {
+                    swap = true;
+                }
+                if (swap) {
+                    int ex = digits[j];
+                    digits[j] = digits[j + 1];
+                    digits[j + 1] = ex;
                 }
             }
         }
     }
-    std::cout << "Multiplication of numbers: " << res << std::endl;
-    std::cout << "Minimum of number:" << min_num << std::endl;
-    std::cout << "Minimum of index: " << min_index << std::endl;
-
-
-
-
-
-
-
-
-
+    for (int i = 0; i < n; i++) {
+        std::cout << digits[i] << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
