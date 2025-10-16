@@ -1,50 +1,60 @@
 #include <iostream>
-#include <cmath>
-
 
 int main() {
-    double num;
-    double min_num = 0.0;
-    double res = 1.0;
-    int min_index = 0;
-    int count = 0;
+    int posl[10000];
     int n;
-    std::cout << "Input amount of numbers: " << std::endl;
+
+    std::cout << "Input nuber of poslegovatelnost: " << std::endl;
     std::cin >> n;
-    std::cout << "Input numders: " << std::endl;
+
+
+    std::cout << "Input posledovatelnost: " << std::endl;
     for (int i = 0; i < n; i++) {
-        std::cin >> num;
-        if ((num < 0) && (num != int(num))) {
-            count += 1;
+        std::cin >> posl[i];
+    }
 
-            if (count == 1) {
-                min_num == num;
-                min_index = i;
-                res = num;
-            }
-            else {
-                res *= num;
+    int newSize = 0;
+    for (int i = 0; i < n; i++) {
+        int num = posl[i];
 
-                if (num < min_num) {
-                    min_num = num;
-                    min_index = i;
+        int lastDigit = num % 10;
 
-                }
-            }
+        int firstDigit = num;
+        while (firstDigit >= 10) {
+            firstDigit /= 10;
+        }
+
+        if (firstDigit != lastDigit) {
+            posl[newSize] = posl[i];
+            newSize++;
         }
     }
-    std::cout << "Multiplication of numbers: " << res << std::endl;
-    std::cout << "Minimum of number:" << min_num << std::endl;
-    std::cout << "Minimum of index: " << min_index << std::endl;
+
+    n = newSize;
+
+    for (int i = 0; i < n; i++) {
+        int num = posl[i];
 
 
+        int firstDigit = num;
+        while (firstDigit >= 10) {
+            firstDigit /= 10;
+        }
 
+        if (firstDigit == 3) {
+            for (int j = n; j > i + 1; j--) {
+                posl[j] = posl[j - 1];
+            }
+            posl[i + 1] = posl[i];
+            n++;
+            i++;
+        }
+    }
 
-
-
-
-
-
+    for (int i = 0; i < n; i++) {
+        std::cout << posl[i] << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
