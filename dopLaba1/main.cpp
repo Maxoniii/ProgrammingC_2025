@@ -14,29 +14,31 @@ int main() {
 	}
 
 	long long min_p = LLONG_MAX;
-	long long j = (A + q1 - 1) / q1 + 10;
-	long long max_tr1 = j;
-	if (j > 1000) {
-		max_tr1 = 1000;
-	}
+	long long max_tr1 = (A/q1)+1;
+
+	
 	for (long long tr1 = 0; tr1 <= max_tr1; tr1++) {
 		long long ton1 = tr1 * q1;
-		long long ost_ton = A - ton1;
 
-		if (ost_ton <= 0) {
+		if (ton1 >= A) {
 			long long p = tr1 * p1;
 			if (p < min_p) {
 				min_p = p;
 			}
 		}
 		else {
-			long long tr2 = (ost_ton + q2 - 1) / q2;
+			long long ost_ton = A - ton1;
+			long long tr2 = ost_ton / q2;
+			if (ost_ton % q2 != 0) {
+				tr2++;
+			}
 			long long final_p = tr1 * p1 + tr2 * p2;
 			if (final_p < min_p) {
 				min_p = final_p;
 			}
 		}
 	}
+
 	std::cout << min_p << std::endl;
 	return 0;
 }

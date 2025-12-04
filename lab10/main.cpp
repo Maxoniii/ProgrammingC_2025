@@ -2,54 +2,65 @@
 #include <iostream>
 
 int main() {
-	const int MAX_SIZE = 100;
-	int posl[MAX_SIZE];
 	int n = 0;
 
 	std::cout << "Input number of numbers: ";
 	std::cin >> n;
 
-	if (n <= 0 || n > MAX_SIZE) {
+	if (n <= 0) {
 		std::cout << "Incorrect size" << std::endl;
 		return 1;
 	}
 
 	std::cout << "Input natural numbers: ";
-	for (int i = 0; i < n; i++) {
-		std::cin >> posl[i];
-		if (posl[i] <= 0) {
-			std::cout << "Numbers must be natural (more than 0)" << std::endl;
-			return 1;
+	Node* head = CREATELIST(n);
+
+
+	Node* tmp = head;
+	bool nat = true;
+	while (tmp != nullptr) {
+		if (tmp->data <= 0) {
+			nat = false;
+			break;
 		}
+		tmp = tmp->next;
 	}
 
-	Node* head = CREATE(posl, n);
+	if (!nat) {
+		std::cout << "Nummbers must be natural" << std::endl;
+		CLEAR(head);
+		return 1;
+	}
 
-	std::cout << "Primary sequence: ";
+	std::cout << "Primary posledovatelnost: " << std::endl;
 	PRINT(head);
 
-	if (nevfg(posl, n, true) || nevfg(posl, n, false)) {
-		std::cout << "Posledovatelnost is nevozrastaet" << std::endl;
+
+
+	bool byfirst = nevfg(head, true);
+	bool bylast = nevfg(head, false);
+
+	if (byfirst || bylast) {
+		std::cout << "Posledovatelnost nevozrastaet: " << std::endl;
 		head = DELETE(head);
 		head = DUBLICATE(head);
+
 	}
 	else {
-		std::cout << "Sorting by first digit" << std::endl;
+		std::cout << "Sort by first digit" << std::endl;
 		head = sortfg(head);
 	}
-
-	std::cout << "Result: ";
+	std::cout << "Result: " << std::endl;
+	
 	PRINT(head);
-
 	CLEAR(head);
 
 	return 0;
+
 }
 
 
-
 /*#pragma once
-
 struct Node {
 	int data;
 	Node* next;
@@ -59,12 +70,12 @@ struct Node {
 int fg(int n);
 int lg(int n);
 bool palindrom(int n);
-bool nevfg(int arr[], int size, bool usefg);
+bool nevfg(Node*, bool usefg);
 Node* MAKE(int value);
 void ADD(Node* head, int value);
 void PRINT(Node* head);
 void CLEAR(Node* head);
-Node* CREATE(int arr[], int size);
+Node* CREATELIST(int value);
 Node* DELETE(Node* head);
 Node* DUBLICATE(Node* head);
 Node* sortfg(Node* head);
@@ -111,6 +122,7 @@ void CLEAR(Node* head) {
 	}
 }
 
+
 int fg(int n) {
 	while (n >= 10) {
 		n /= 10;
@@ -133,48 +145,57 @@ bool palindrom(int n) {
 		fake = fake * 10 + l;
 		n = n / 10;
 	}
-	if (orig == fake) {
+	return orig == fake;
+}
+
+bool nevfg(Node* head, bool usefg) {
+	if (head == nullptr || head->next == nullptr) {
 		return true;
 	}
-	else {
-		return false;
-	}
-}
+	Node* nast = head;
+	Node* sled = head->next;
 
-bool nevfg(int arr[], int size, bool usefg) {
-	for (int i = 1; i < size; i++) {
-		int nast, pred;
-
+	while (sled != nullptr) {
+		int dnast, dsled;
 		if (usefg) {
-			nast = fg(arr[i]);
-			pred = fg(arr[i - 1]);
+			dnast = fg(nast->data);
+			dsled = fg(sled->data);
 		}
 		else {
-			nast = lg(arr[i]);
-			pred = lg(arr[i - 1]);
+			dnast = lg(nast->data);
+			dsled = lg(sled->data);
 		}
-		if (nast > pred) {
+		if (dnast < dsled) {
 			return false;
 		}
+		nast = sled;
+		sled = sled->next;
 	}
 	return true;
+
+		
 }
+	
 
 
-Node* CREATE(int arr[], int size) {
-	if (size == 0) return nullptr;
-
-	Node* head = MAKE(arr[0]);
+Node* CREATELIST(int n) {
+	if (n <= 0) return nullptr;
+	int value;
+	std::cin >> value;
+	Node* head = MAKE(value);
 	Node* nast = head;
 
-	for (int i = 1; i < size; i++) {
-		nast->next = MAKE(arr[i]);
+	for (int i = 1; i < n; i++) {
+		std::cin >> value;
+		nast->next = MAKE(value);
 		nast = nast->next;
 	}
-
-
 	return head;
+
 }
+
+
+
 
 Node* DELETE(Node* head) {
 	Node ex;
@@ -206,7 +227,7 @@ Node* DUBLICATE(Node* head) {
 	return head;
 }
 
-Node* sortfg (Node* head) {
+Node* sortfg(Node* head) {
 	if (head == nullptr || head->next == nullptr) {
 		return head;
 	}
@@ -222,20 +243,10 @@ Node* sortfg (Node* head) {
 			int sled = fg(nast->next->data);
 
 			if (dnast > sled) {
-				Node* nextNode = nast->next;
+				int temp = nast->data;
+				nast->data = nast->next->data;
+				nast->next->data = temp;
 
-				nast->next = nextNode->next;
-				nextNode->next = nast;
-
-				if (pred == nullptr) {
-					head = nextNode;
-				}
-				else {
-					pred->next = nextNode;
-				}
-
-
-				pred = nextNode;
 				raz = true;
 			}
 			else {
