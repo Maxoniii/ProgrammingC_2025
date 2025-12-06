@@ -1,204 +1,232 @@
 ﻿#include <iostream>
+#include "func.hpp"
+
+const char LOWUP = 32;
+
+bool is_alpha(char c) {
+    return(c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+char to_lower(char c) {
+    if (c >= 'A' && c <= 'Z') {
+        return c + LOWUP;
+    }
+    return c;
+}
+
+std::string to_lower(const std::string& s) {
+    std::string result = s;
+    int i = 0;
+    while (i < result.length()) {
+        result[i] = to_lower(result[i]);
+        i++;
+    }
+    return result;
+}
+
+
+bool sogl(char c) {
+    c = to_lower(c);
+    const char* sogl = "bcdfghjklmnpqrstvwxyz";
+    for (int i = 0; sogl[i] != '\0'; i++) {
+        if (c == sogl[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::string ochistka(const std::string& word) {
+    if (word.empty())return "";
+
+    std::string clean;
+    int begin = 0;
+    int end = (int)word.length() - 1;
+
+    while (begin < (int)word.length() && !is_alpha(word[begin])) {
+        begin++;
+    }
+    while (end >= 0 && !is_alpha(word[end])) {
+        end--;
+    }
+    if (begin <= end) {
+        for (int i = begin; i < end + 1; i++) {
+            clean += word[i];
+
+        }
+    }
+    return clean;
+}
+
+
+std::vector<std::string> all_words(const std::string& text) {
+    std::vector<std::string>words;
+    std::string nast_word;
+
+    for (int i = 0; i < text.length(); i++) {
+        char c = text[i];
+
+        if (c == ' ' || c == '\n') {
+            if (!nast_word.empty()) {
+                std::string cleaned_word = ochistka(nast_word);
+                if (!cleaned_word.empty()) {
+                    words.push_back(cleaned_word);
+                }
+                nast_word.clear();
+            }
+        }
+        else {
+            nast_word += c;
+        }
+
+    }
+    if (!nast_word.empty()) {
+        std::string cleaned_word = ochistka(nast_word);
+        if (!cleaned_word.empty()) {
+            words.push_back(cleaned_word);
+        }
+    }
+    return words;
+}
+
+
+
+int count_diff(const std::string& word) {
+    bool seen[26] = { false };
+    int count = 0;
+
+    for (int i = 0; i < word.length(); i++) {
+        char c = word[i];
+
+        if (is_alpha(c) && sogl(c)) {
+            int index = to_lower(c) - 'a';
+            if (index >= 0 && index < 26 && !seen[index]) {
+                seen[index] = true;
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+
+void DELETE_DUBBLE(std::vector<inf>& words) {
+    std::vector<inf>un_words;
+
+    for (int i = 0; i < words.size(); i++) {
+        const inf& info = words[i];
+        bool found = false;
+        std::string lower_nast = to_lower(info.word);
+
+        for (int j = 0; j < un_words.size(); j++) {
+            if (to_lower(un_words[j].word) == lower_nast) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found == false) {
+            un_words.push_back(info);
+        }
+    }
+    words = un_words;
+}
+
+void swap(inf& a, inf& b) {
+    inf trp = a;
+    a = b;
+    b = trp;
+}
+
+
+
+bool yesorno(const inf& a, const inf& b) {
+    if (a.sogl_count != b.sogl_count) {
+        return a.sogl_count < b.sogl_count;
+    }
+
+    return to_lower(a.word) > to_lower(b.word);
+}
+
+
+void main_swap(std::vector<inf>& words) {
+    int n = words.size();
+    bool swapp;
+
+    for (int i = 0; i < n - 1; i++) {
+        swapp = false;
+
+        for (int j = 0; j < n - i - 1; j++) {
+            if (yesorno(words[j], words[j + 1])) {
+                swap(words[j], words[j + 1]);
+                swapp = true;
+            }
+        }
+
+        if (swapp == false) {
+            break;
+        }
+    }
+}
+
+
+
+
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include "func.hpp"
 
 int main() {
-	std::ifstream input_file("input.txt");
-	if (!input_file.is_open()) {
-		std::cout << "Not open file" << std::endl;
-		return 1;
-	}
+    std::ifstream input_file("input.txt");
+    if (!input_file.is_open()) {
+        std::cout << "Not open file" << std::endl;
+        return 1;
+    }
 
-	std::string text;
-	std::string line;
-	while (std::getline(input_file, line)) {
-		text += line + " ";
-	}
-	input_file.close();
-
-
-	std::vector<std::string>words = all_words(text);
-
-	std::vector<inf>word_info;
-
-	for (int i = 0; i < words.size(); i++) {
-		const std::string& word = words[i];
-		std::string low_word = to_lower(word);
-		int sogl_count = count_diff(low_word);
-		word_info.push_back({ word, sogl_count });
-	}
-	DELETE_DUBBLE(word_info);
-	main_swap(word_info);
-
-	if (word_info.size() > 2000) {
-		word_info.resize(2000);
-	}
-
-	std::ofstream output_file("output.txt");
-	if (!output_file.is_open()) {
-		std::cout << "Not create file output.txt" << std::endl;
-		return 1;
-	}
-
-	for (int i = 0; i < word_info.size(); i++) {
-		const inf& info = word_info[i];
-		output_file << info.word << " " << info.sogl_count << std::endl;
-	}
-
-	output_file.close();
-	std::cout << "Result wrote in file output.txt" << std::endl;
-	std::cout << "Founded unique words: " << word_info.size() << std::endl;
-
-	return 0;
-}
+    std::string text;
+    std::string line;
+    while (std::getline(input_file, line)) {
+        text += line + " ";
+    }
+    input_file.close();
 
 
+    std::vector<std::string>words = all_words(text);
 
+    std::vector<inf>word_info;
 
+    for (int i = 0; i < words.size(); i++) {
+        const std::string& word = words[i];
+        std::string low_word = to_lower(word);
+        int sogl_count = count_diff(low_word);
+        word_info.push_back({ word, sogl_count });
+    }
+    DELETE_DUBBLE(word_info);
+    main_swap(word_info);
 
-#include <iostream>
-#include "func.hpp"
+    if (word_info.size() > 2000) {
+        word_info.resize(2000);
+    }
 
-const char LOWUP = 32;
+    std::ofstream output_file("output.txt");
+    if (!output_file.is_open()) {
+        std::cout << "Not create file output.txt" << std::endl;
+        return 1;
+    }
 
-bool is_alpha(char c) {
-	return(c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
+    for (int i = 0; i < word_info.size(); i++) {
+        const inf& info = word_info[i];
+        output_file << info.word << " " << info.sogl_count << std::endl;
+    }
 
-char to_lower(char c) {
-	if (c >= 'A' && c <= 'Z') {
-		return c + LOWUP;
-	}
-	return c;
-}
+    output_file.close();
+    std::cout << "Result wrote in file output.txt" << std::endl;
+    std::cout << "Founded unique words: " << word_info.size() << std::endl;
 
-std::string to_lower(const std::string& s) {
-	std::string result = s;
-	int i = 0;
-	while (i < result.length()) {
-		result[i] = to_lower(result[i]);
-		i++;
-	}
-	return result;
-}
-
-
-bool sogl(char c) {
-	c = to_lower(c);
-	const char* sogl = "bcdfghjklmnpqrstvwxyz";
-	for (int i = 0; sogl[i] != '\0'; i++) {
-		if (c == sogl[i]) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-
-std::vector<std::string> all_words(const std::string& text) {
-	std::vector<std::string>words;
-	std::string nast_word;
-
-	for (int i = 0; i < text.length(); i++) {
-		char c = text[i];
-
-		if (is_alpha(c)) {
-			nast_word += c;
-		}
-		else {
-			if (!nast_word.empty()) {
-				words.push_back(nast_word);
-				nast_word.clear();
-			}
-		}
-	}
-
-	if (!nast_word.empty()) {
-		words.push_back(nast_word);
-	}
-	return words;
-}
-
-
-int count_diff(const std::string& word) {
-	bool seen[26] = { false };
-	int count = 0;
-
-	for (int i = 0; i < word.length(); i++) {
-		char c = word[i];
-
-		if (sogl(c)) {
-			int index = to_lower(c) - 'a';
-			if (!seen[index]) {
-				seen[index] = true;
-				count++;
-			}
-		}
-	}
-	return count;
-}
-
-
-void DELETE_DUBBLE(std::vector<inf>& words) {
-	std::vector<inf>un_words;
-
-	for (int i = 0; i < words.size(); i++) {
-		const inf& info = words[i];
-		bool found = false;
-		std::string lower_nast = to_lower(info.word);
-
-		for (int j = 0; j < un_words.size(); j++) {
-			if (to_lower(un_words[j].word) == lower_nast) {
-				found = true;
-				break;
-			}
-		}
-
-		if (found == false) {
-			un_words.push_back(info);
-		}
-	}
-	words = un_words;
-}
-
-void swap(inf& a, inf& b) {
-	inf trp = a;
-	a = b;
-	b = trp;
-}
-
-
-
-bool yesorno(const inf& a, const inf& b) {
-	if (a.sogl_count != b.sogl_count) {
-		return a.sogl_count < b.sogl_count;
-	}
-
-	return to_lower(a.word) > to_lower(b.word);
-}
-
-
-void main_swap(std::vector<inf>& words) {
-	int n = words.size();
-	bool swapp;
-
-	for (int i = 0; i < n - 1; i++) {
-		swapp = false;
-
-		for (int j = 0; j < n - i - 1; j++) {
-			if (yesorno(words[j], words[j + 1])) {
-				swap(words[j], words[j + 1]);
-				swapp = true;
-			}
-		}
-
-		if (swapp == false) {
-			break;
-		}
-	}
+    return 0;
 }
 
 
@@ -210,8 +238,8 @@ void main_swap(std::vector<inf>& words) {
 #include <vector>
 
 struct inf {
-	std::string word;
-	int sogl_count;
+    std::string word;
+    int sogl_count;
 };
 
 
