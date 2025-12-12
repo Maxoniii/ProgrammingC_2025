@@ -162,7 +162,7 @@ void alphabet(std::vector<std::string>& words) {
 	for (int i = 0; i < n - 1; i++) {
 		swapp = false;
 
-		for (int j = 0; j < n - i - 1; i++) {
+		for (int j = 0; j < n - i - 1; j++) {
 			std::string word1 = to_lower(words[j]);
 			std::string word2 = to_lower(words[j + 1]);
 
