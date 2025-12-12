@@ -31,15 +31,16 @@ int main() {
 	for (int i = 0; i < repeated_glasn_words.size(); i++) {
 		std::cout << repeated_glasn_words[i] << " ";
 	}
+	std::cout << std::endl;
+
 	std::cout << "Inverted words: " << std::endl;
-	for (int i = 0; inverted_words[i].size(); i++) {
+	for (int i = 0; i < inverted_words.size(); i++) {
 		std::cout << inverted_words[i] << " ";
 	}
+	std::cout << std::endl;
 
 	return 0;
 }
-
-
 
 
 
@@ -178,7 +179,6 @@ void alphabet(std::vector<std::string>& words) {
 		}
 	}
 }
-
 
 
 
