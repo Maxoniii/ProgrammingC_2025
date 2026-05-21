@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_CalculatorLib_FILE /home/max/CalculatorLib/build/Desktop-Debug/libCalculatorLib.a)
+set(__QT_DEPLOY_TARGET_CalculatorLib_TYPE STATIC_LIBRARY)

@@ -1,0 +1,16 @@
+/home/max/MeteoStancia/build/CMakeFiles/edit_cache.dir
+/home/max/MeteoStancia/build/CMakeFiles/rebuild_cache.dir
+/home/max/MeteoStancia/build/meteo/CMakeFiles/meteo.dir
+/home/max/MeteoStancia/build/meteo/CMakeFiles/edit_cache.dir
+/home/max/MeteoStancia/build/meteo/CMakeFiles/rebuild_cache.dir
+/home/max/MeteoStancia/build/synchro_server/CMakeFiles/synchro_server.dir
+/home/max/MeteoStancia/build/synchro_server/CMakeFiles/edit_cache.dir
+/home/max/MeteoStancia/build/synchro_server/CMakeFiles/rebuild_cache.dir
+/home/max/MeteoStancia/build/synchro_client/CMakeFiles/synchro_client.dir
+/home/max/MeteoStancia/build/synchro_client/CMakeFiles/edit_cache.dir
+/home/max/MeteoStancia/build/synchro_client/CMakeFiles/rebuild_cache.dir
+/home/max/MeteoStancia/build/gui_app/CMakeFiles/gui_app.dir
+/home/max/MeteoStancia/build/gui_app/CMakeFiles/edit_cache.dir
+/home/max/MeteoStancia/build/gui_app/CMakeFiles/rebuild_cache.dir
+/home/max/MeteoStancia/build/gui_app/CMakeFiles/gui_app_autogen_timestamp_deps.dir
+/home/max/MeteoStancia/build/gui_app/CMakeFiles/gui_app_autogen.dir
