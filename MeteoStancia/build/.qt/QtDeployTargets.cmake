@@ -1,0 +1,8 @@
+set(__QT_DEPLOY_TARGET_meteo_FILE /home/max/MeteoStancia/build/meteo/libmeteo.a)
+set(__QT_DEPLOY_TARGET_meteo_TYPE STATIC_LIBRARY)
+set(__QT_DEPLOY_TARGET_synchro_server_FILE /home/max/MeteoStancia/build/synchro_server/synchro_server)
+set(__QT_DEPLOY_TARGET_synchro_server_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_synchro_client_FILE /home/max/MeteoStancia/build/synchro_client/synchro_client)
+set(__QT_DEPLOY_TARGET_synchro_client_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_gui_app_FILE /home/max/MeteoStancia/build/gui_app/gui_app)
+set(__QT_DEPLOY_TARGET_gui_app_TYPE EXECUTABLE)

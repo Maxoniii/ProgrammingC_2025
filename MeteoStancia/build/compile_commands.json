@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/home/max/MeteoStancia/build/meteo",
+  "command": "/usr/bin/g++  -I/home/max/MeteoStancia/meteo/../ext/asio/include -I/home/max/MeteoStancia/meteo/../ext -I/home/max/MeteoStancia/meteo/inc -g -std=gnu++20 -o CMakeFiles/meteo.dir/src/utils.cpp.o -c /home/max/MeteoStancia/meteo/src/utils.cpp",
+  "file": "/home/max/MeteoStancia/meteo/src/utils.cpp",
+  "output": "meteo/CMakeFiles/meteo.dir/src/utils.cpp.o"
+},
+{
+  "directory": "/home/max/MeteoStancia/build/meteo",
+  "command": "/usr/bin/g++  -I/home/max/MeteoStancia/meteo/../ext/asio/include -I/home/max/MeteoStancia/meteo/../ext -I/home/max/MeteoStancia/meteo/inc -g -std=gnu++20 -o CMakeFiles/meteo.dir/src/control_room.cpp.o -c /home/max/MeteoStancia/meteo/src/control_room.cpp",
+  "file": "/home/max/MeteoStancia/meteo/src/control_room.cpp",
+  "output": "meteo/CMakeFiles/meteo.dir/src/control_room.cpp.o"
+},
+{
+  "directory": "/home/max/MeteoStancia/build/synchro_server",
+  "command": "/usr/bin/g++  -I/home/max/MeteoStancia/synchro_server/../ext/asio/include -I/home/max/MeteoStancia/meteo/inc -g -std=gnu++20 -o CMakeFiles/synchro_server.dir/server.cpp.o -c /home/max/MeteoStancia/synchro_server/server.cpp",
+  "file": "/home/max/MeteoStancia/synchro_server/server.cpp",
+  "output": "synchro_server/CMakeFiles/synchro_server.dir/server.cpp.o"
+},
+{
+  "directory": "/home/max/MeteoStancia/build/synchro_client",
+  "command": "/usr/bin/g++  -I/home/max/MeteoStancia/synchro_client/../ext/asio/include -I/home/max/MeteoStancia/synchro_client/../ext -I/home/max/MeteoStancia/meteo/inc -g -std=gnu++20 -o CMakeFiles/synchro_client.dir/client.cpp.o -c /home/max/MeteoStancia/synchro_client/client.cpp",
+  "file": "/home/max/MeteoStancia/synchro_client/client.cpp",
+  "output": "synchro_client/CMakeFiles/synchro_client.dir/client.cpp.o"
+},
+{
+  "directory": "/home/max/MeteoStancia/build/gui_app",
+  "command": "/usr/bin/g++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/home/max/MeteoStancia/build/gui_app/gui_app_autogen/include -I/home/max/MeteoStancia/meteo/inc -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib64/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -g -std=gnu++17 -o CMakeFiles/gui_app.dir/gui_app_autogen/mocs_compilation.cpp.o -c /home/max/MeteoStancia/build/gui_app/gui_app_autogen/mocs_compilation.cpp",
+  "file": "/home/max/MeteoStancia/build/gui_app/gui_app_autogen/mocs_compilation.cpp",
+  "output": "gui_app/CMakeFiles/gui_app.dir/gui_app_autogen/mocs_compilation.cpp.o"
+},
+{
+  "directory": "/home/max/MeteoStancia/build/gui_app",
+  "command": "/usr/bin/g++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/home/max/MeteoStancia/build/gui_app/gui_app_autogen/include -I/home/max/MeteoStancia/meteo/inc -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib64/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -g -std=gnu++17 -o CMakeFiles/gui_app.dir/main.cpp.o -c /home/max/MeteoStancia/gui_app/main.cpp",
+  "file": "/home/max/MeteoStancia/gui_app/main.cpp",
+  "output": "gui_app/CMakeFiles/gui_app.dir/main.cpp.o"
+},
+{
+  "directory": "/home/max/MeteoStancia/build/gui_app",
+  "command": "/usr/bin/g++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I/home/max/MeteoStancia/build/gui_app/gui_app_autogen/include -I/home/max/MeteoStancia/meteo/inc -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib64/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -g -std=gnu++17 -o CMakeFiles/gui_app.dir/mainwindow.cpp.o -c /home/max/MeteoStancia/gui_app/mainwindow.cpp",
+  "file": "/home/max/MeteoStancia/gui_app/mainwindow.cpp",
+  "output": "gui_app/CMakeFiles/gui_app.dir/mainwindow.cpp.o"
+}
+]
