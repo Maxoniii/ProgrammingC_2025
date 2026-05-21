@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMatrixLib.a CMakeFiles/MatrixLib.dir/MatrixLib_autogen/mocs_compilation.cpp.o CMakeFiles/MatrixLib.dir/matrix.cpp.o
-/usr/bin/ranlib libMatrixLib.a

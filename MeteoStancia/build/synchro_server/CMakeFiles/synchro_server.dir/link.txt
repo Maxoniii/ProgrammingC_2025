@@ -1,1 +1,0 @@
-/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/synchro_server.dir/link.d CMakeFiles/synchro_server.dir/server.cpp.o -o synchro_server  ../meteo/libmeteo.a

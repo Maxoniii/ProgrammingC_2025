@@ -1,0 +1,13 @@
+build/
+*.o
+*.a
+*.so
+*.exe
+*.out
+__pycache__/
+*.pyc
+.cache/
+.vscode/
+.idea/
+*.user
+cmake-build-*/

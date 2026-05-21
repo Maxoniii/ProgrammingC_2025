@@ -1,8 +1,0 @@
-[
-{
-  "directory": "/home/max/Lab7/build",
-  "command": "/usr/bin/g++   -g -o CMakeFiles/my_app.dir/main.cpp.o -c /home/max/Lab7/main.cpp",
-  "file": "/home/max/Lab7/main.cpp",
-  "output": "CMakeFiles/my_app.dir/main.cpp.o"
-}
-]

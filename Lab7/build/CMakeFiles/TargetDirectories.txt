@@ -1,3 +1,0 @@
-/home/max/Lab7/build/CMakeFiles/my_app.dir
-/home/max/Lab7/build/CMakeFiles/edit_cache.dir
-/home/max/Lab7/build/CMakeFiles/rebuild_cache.dir

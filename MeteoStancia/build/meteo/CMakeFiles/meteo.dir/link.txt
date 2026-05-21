@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmeteo.a CMakeFiles/meteo.dir/src/utils.cpp.o CMakeFiles/meteo.dir/src/control_room.cpp.o
-/usr/bin/ranlib libmeteo.a

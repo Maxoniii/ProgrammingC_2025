@@ -1,4 +1,0 @@
-set(__QT_DEPLOY_TARGET_CalculatorLib_FILE /home/max/LabCalculator/build/Desktop-Debug/CalculatorLib_build/libCalculatorLib.a)
-set(__QT_DEPLOY_TARGET_CalculatorLib_TYPE STATIC_LIBRARY)
-set(__QT_DEPLOY_TARGET_LabCalculator_FILE /home/max/LabCalculator/build/Desktop-Debug/LabCalculator)
-set(__QT_DEPLOY_TARGET_LabCalculator_TYPE EXECUTABLE)

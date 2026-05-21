@@ -1,2 +1,0 @@
-/usr/bin/ar qc libCalculatorLib.a CMakeFiles/CalculatorLib.dir/CalculatorLib_autogen/mocs_compilation.cpp.o CMakeFiles/CalculatorLib.dir/bigint.cpp.o
-/usr/bin/ranlib libCalculatorLib.a
