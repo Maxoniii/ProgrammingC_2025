@@ -413,6 +413,286 @@ double matrix::determinant() const {
     return total_det;
 }
 
+#include "matrix.hpp"
+#include <iostream>
+#include <algorithm>
+
+namespace mt{
+
+void matrix::_swap(matrix& other){
+    std::swap(str_,other.str_);
+    std::swap(slb_,other.slb_);
+    std::swap(data_,other.data_);
+
+}
+matrix::matrix(): str_(0), slb_(0), data_(nullptr){}
+
+matrix::matrix(size_t str, size_t slb):str_(str),slb_(slb),data_(new double[str*slb]){
+
+    std::fill(data_, data_ + str * slb, 0.0);
+
+}
+
+matrix::~matrix(){
+    if (data_!= nullptr){
+        delete[] data_;
+        data_ = nullptr;
+    }
+}
+
+
+matrix::matrix(const matrix& other)
+    : str_(other.str_), slb_(other.slb_), data_(new double[str_ * slb_]) {
+
+    std::copy(other.data_, other.data_ + str_ * slb_, data_);
+}
+
+
+matrix& matrix::operator= (matrix other){
+
+    _swap(other);
+    return *this;
+}
+
+double& matrix::sh(size_t str,size_t slb){
+    if (str>=str_ || slb>=slb_){
+        std::cout<<"Error: Escape from matrix"<<std::endl;
+
+        static double zagl = 0.0;
+        return zagl;
+    }
+
+    return data_[str*slb_+slb];
+}
+
+
+const double& matrix::sh(size_t str, size_t slb) const {
+    if (str >= str_ || slb >= slb_) {
+        std::cout << "Error: Escape from matrix" << std::endl;
+        static const double zagl = 0.0;
+        return zagl;
+    }
+    return data_[str * slb_ + slb];
+}
+
+
+void matrix::print() const{
+    if (is_empty()){
+        std::cout<<"Matrix is empty"<<std::endl;
+        return;
+    }
+
+    for (size_t i =0; i<str_; i++){
+        for(size_t j = 0; j<slb_; j++){
+            std::cout<<sh(i,j)<<' ';
+        }
+        std::cout<<std::endl;
+    }
+}
+
+
+void matrix::swap_with(matrix& other){
+    _swap(other);
+
+}
+
+void swap(matrix&a,matrix&b){
+    a.swap_with(b);
+}
+
+
+
+matrix& matrix::operator++() {
+    for (size_t i = 0; i < str_ * slb_; ++i) {
+        data_[i] += 1.0;
+    }
+    return *this;
+}
+
+
+
+matrix matrix::operator++(int) {
+    matrix temp(*this);
+    ++(*this);
+    return temp;
+}
+
+
+matrix operator+(const matrix& lhs, const matrix& rhs) {
+    if (lhs.get_str() != rhs.get_str() || lhs.get_slb() != rhs.get_slb()) {
+        throw std::invalid_argument("Размеры матрицы должны совпадать для сложения");
+    }
+    matrix result(lhs.get_str(), lhs.get_slb());
+    for (size_t i = 0; i < lhs.get_str(); ++i) {
+        for (size_t j = 0; j < lhs.get_slb(); ++j) {
+            result.sh(i, j) = lhs.sh(i, j) + rhs.sh(i, j);
+        }
+    }
+    return result;
+}
+
+matrix operator*(const matrix& lhs, const matrix& rhs) {
+    matrix result(lhs);
+    result *= rhs;
+    return result;
+}
+
+
+matrix operator*=(const matrix& rhs) {
+    if (this->get_slb() != rhs.get_str) {
+        throw std::invalid_argument("Размеры матрицы должны совпадать для сложения");
+    }
+    matrix result(this->get_str(), rhs.get_slb());
+    for (size_t i = 0; i < this->get_str(); ++i) {
+        for (size_t j = 0; j < rhs.get_slb(); ++j) {
+            double sum = 0.0;
+            for (size_t k = 0; k < this->get_slb(); ++k) {
+                sum += this->sh(i, k) * rhs.sh(k, j);
+            }
+            result.sh(i, j) = sum;
+        }
+    }
+}
+matrix matrix::get_minor_matrix(size_t str, size_t slb) {
+    matrix result(this->get_str() - 1, this->get_slb() - 1);
+    size_t t_i = 0;
+    for (size_t i = 0; i < this->get_str(); ++i) {
+        if (i == str) continue;
+
+        size_t t_j = 0;
+        for (size_t j = 0; j < this->get_slb(); ++j) {
+            if (j == slb) continue;
+            result.sh(t_i, t_j) = this->sh(i, j);
+            t_j++;
+        }
+        t_i++;
+    }
+    return result;
+}
+
+double matrix::determinate() const {
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Определитель считается только для квадратных матриц");
+
+    }
+    size_t n = this->get_str();
+
+    if (n == 1) {
+        return this->sh(0, 0);
+    }
+
+    if (n == 2) {
+        return (this->sh(0, 0) * this->sh(1, 1)) - (this->sh(0, 1) * this->sh(1, 0));
+    }
+
+    if (n == 3) {
+        double glavn_elem=(this->sh(0, 0) * this->sh(1, 1) * this->sh(2, 2)) + (this->sh(1, 0) * this->sh(2, 1) * this->sh(0, 2)) + (this->sh(0, 1) * this->sh(1, 2) * this->sh(2, 0));
+        double poboch_elem = (this->sh(0, 2) * this->sh(1, 1) * this->sh(2, 0)) + (this->sh(0, 1) * this->sh(1, 0) * this->sh(2, 2) + (this->sh(1, 2) * this->sh(2, 1) * this->sh(0, 0));
+        return glavn_elem - poboch_elem;
+    }
+
+    double deter = 0.0;
+    double sign = 1.0;
+    
+    for (size_t j = 0; j < size; ++j) {
+        double nast = this->sh(0, j);
+
+        matrix obrezn = this->get_minor_matrix(0, j);
+
+        double mini_determinite = obrezn.determinate();
+
+        deter += sign * nast * mini_determinate;
+
+        sign = -sign;
+    }
+
+    return deter;
+}
+
+
+double matrix::algebr_dop(size_t i, size_t j) const
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Алгебраическое дополнение считается только для квадратных матриц");
+    }
+    
+    sign = ((i + j) % 2 == 0) ? 1.0 : -1.0;
+
+    return sign * this->get_minor_matrix(i, j).determinant();
+}
+
+#ifndef MATRIX_H
+#define MATRIX_H
+
+class matrix
+{
+public:
+    matrix();
+};
+#endif // MATRIX_H
+
+#pragma once 
+#include <cstddef>
+#include <stdexcept>
+namespace mt{
+class matrix{
+private:
+    size_t str_;
+    size_t slb_;
+    double* data_;
+
+    void _swap(matrix& other);
+public:
+    matrix();
+
+    explicit matrix(size_t str,size_t slb);
+
+    ~matrix();
+
+    matrix(const matrix& other);
+    
+    matrix& operator=(matrix other);
+
+
+    double& sh(size_t str,size_t slb);
+
+    const double& sh(size_t str, size_t slb) const;
+
+    void print()const;
+
+    void swap_with(matrix& other);
+
+    size_t get_str()const{
+        return str_;
+    };
+
+    size_t get_slb()const{
+        return slb_;
+    };
+
+    size_t get_quantity()const{
+        return str_*slb_;
+    };
+
+
+    bool is_empty()const{
+        return str_ == 0 || slb_==0;
+    };
+
+    matrix& operator++();
+    matrix operator++(int);
+
+
+
+};
+matrix operator+(const matrix& lhs,const matrix& rhs);
+matrix operator*(const matrix& lhs, const matrix& rhs);
+void swap(matrix& a,matrix& b);
+}
+
+
+
+
+
 
 #pragma once
 #include <iostream>
