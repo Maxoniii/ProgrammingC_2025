@@ -188,7 +188,25 @@ std::string to_upper(const std::string& s) {
 
 
 
+matrix matrix::operator++(int) {
+    matrix temp(*this);
+    ++(*this);
+    return temp;
+}
 
+
+matrix operator+(const matrix& lhs, const matrix& rhs) {
+    if (lhs.get_str() != rhs.get_str() || lhs.get_slb() != rhs.get_slb()) {
+        throw std::invalid_argument("Размеры матрицы должны совпадать для сложения");
+    }
+    matrix result(lhs.get_str(), lhs.get_slb());
+    for (size_t i = 0; i < lhs.get_str(); ++i) {
+        for (size_t j = 0; j < lhs.get_slb(); ++j) {
+            result.sh(i, j) = lhs.sh(i, j) + rhs.sh(i, j);
+        }
+    }
+    return result;
+}
 
 
 
