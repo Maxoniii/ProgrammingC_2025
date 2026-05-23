@@ -1328,3 +1328,81 @@ double matrix::algebr_dop(size_t i, size_t j) const {
 
 } // namespace mt
 
+
+
+
+
+
+
+#pragma once 
+#include <cstddef>
+#include <stdexcept>
+
+namespace mt {
+
+class matrix {
+private:
+    size_t str_;
+    size_t slb_;
+    double* data_;
+
+    void _swap(matrix& other);
+
+public:
+    matrix();
+
+    explicit matrix(size_t str, size_t slb);
+
+    ~matrix();
+
+    matrix(const matrix& other);
+    
+    matrix& operator=(matrix other);
+
+    double& sh(size_t str, size_t slb);
+
+    const double& sh(size_t str, size_t slb) const;
+    
+    void input(); // Не забудьте реализовать этот метод в cpp (ввод матрицы)
+
+    void print() const;
+
+    matrix get_minor_matrix(size_t str, size_t slb) const;
+
+    double algebr_dop(size_t i, size_t j) const;
+
+    // ИСПРАВЛЕНО: Добавлена точка с запятой
+    double determinante() const; 
+
+    void swap_with(matrix& other);
+
+    // ИСПРАВЛЕНО: Удалены лишние точки с запятой после инлайн-функций
+    size_t get_str() const {
+        return str_;
+    }
+
+    size_t get_slb() const {
+        return slb_;
+    }
+
+    size_t get_quantity() const {
+        return str_ * slb_;
+    }
+
+    bool is_empty() const {
+        return str_ == 0 || slb_ == 0;
+    }
+
+    matrix& operator++();
+    matrix operator++(int);
+
+    // ИСПРАВЛЕНО: Добавлено объявление оператора для корректной работы умножения
+    matrix& operator*=(const matrix& rhs);
+};
+
+matrix operator+(const matrix& lhs, const matrix& rhs);
+matrix operator*(const matrix& lhs, const matrix& rhs);
+void swap(matrix& a, matrix& b);
+
+} // namespace mt
+
