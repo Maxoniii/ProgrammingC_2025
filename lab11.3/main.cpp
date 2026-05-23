@@ -208,6 +208,104 @@ matrix operator+(const matrix& lhs, const matrix& rhs) {
     return result;
 }
 
+matrix& matrix::operator*=(const matrix& rhs) {
+    // Проверка согласованности размеров: число столбцов левой == числу строк правой
+    if (this->get_slb() != rhs.get_str()) {
+        throw std::invalid_argument("Размеры матриц несовместимы для умножения");
+    }
+
+    // Создаем временную матрицу нужного размера
+    matrix result(this->get_str(), rhs.get_slb());
+
+    // Алгоритм умножения строк на столбцы
+    for (size_t i = 0; i < this->get_str(); ++i) {
+        for (size_t j = 0; j < rhs.get_slb(); ++j) {
+            double sum = 0.0;
+            for (size_t k = 0; k < this->get_slb(); ++k) {
+                sum += this->sh(i, k) * rhs.sh(k, j);
+            }
+            result.sh(i, j) = sum;
+        }
+    }
+
+    // Присваиваем результат текущему объекту
+    *this = result; 
+    return *this;
+}
+
+
+
+// 1. Получение матрицы-минора (без строки row_to_remove и столбца col_to_remove)
+matrix matrix::get_minor_matrix(size_t row_to_remove, size_t col_to_remove) const {
+    if (this->get_str() <= 1 || this->get_slb() <= 1) {
+        throw std::logic_error("Невозможно получить минор для матрицы размера меньше 2x2");
+    }
+
+    // Новая матрица будет на 1 строку и 1 столбец меньше
+    matrix result(this->get_str() - 1, this->get_slb() - 1);
+    
+    size_t target_i = 0;
+    for (size_t i = 0; i < this->get_str(); ++i) {
+        if (i == row_to_remove) continue; // Пропускаем удаляемую строку
+        
+        size_t target_j = 0;
+        for (size_t j = 0; j < this->get_slb(); ++j) {
+            if (j == col_to_remove) continue; // Пропускаем удаляемый столбец
+            
+            result.sh(target_i, target_j) = this->sh(i, j);
+            target_j++;
+        }
+        target_i++;
+    }
+    return result;
+}
+
+// 2. Рекурсивное вычисление определителя (детерминанта) матрицы
+double matrix::determinant() const {
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Определитель считается только для квадратных матриц");
+    }
+
+    size_t n = this->get_str();
+
+    // Базовые случаи для рекурсии
+    if (n == 1) {
+        return this->sh(0, 0);
+    }
+    if (n == 2) {
+        return this->sh(0, 0) * this->sh(1, 1) - this->sh(0, 1) * this->sh(1, 0);
+    }
+
+    double det = 0.0;
+    // Разложение по первой строке (индекс 0)
+    for (size_t j = 0; j < n; ++j) {
+        double sign = (j % 2 == 0) ? 1.0 : -1.0;
+        det += sign * this->sh(0, j) * this->get_minor_matrix(0, j).determinant();
+    }
+    return det;
+}
+
+// 3. Вычисление алгебраического дополнения для элемента (i, j)
+double matrix::cofactor(size_t i, size_t j) const {
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Алгебраическое дополнение считается только для квадратных матриц");
+    }
+    
+    // Знак определяется суммой индексов (-1)^(i+j)
+    // В C++ индексы с 0, поэтому математическая логика сохраняется
+    double sign = ((i + j) % 2 == 0) ? 1.0 : -1.0;
+    
+    // Алгебраическое дополнение — это знак умноженный на детерминант минора
+    return sign * this->get_minor_matrix(i, j).determinant();
+}
+
+
+
+matrix operator*(const matrix& lhs, const matrix& rhs) {
+    matrix result(lhs); // Копируем левую матрицу
+    result *= rhs;      // Используем внутренний оператор *=
+    return result;      // Возвращаем результат
+}
 
 
 
