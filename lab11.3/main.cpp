@@ -309,6 +309,111 @@ matrix operator*(const matrix& lhs, const matrix& rhs) {
 
 
 
+
+
+double matrix::determinant() const {
+    // Шаг 1: Проверяем, квадратная ли матрица. Другие не считаются!
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Определитель можно посчитать только для КВАДРАТНОЙ матрицы!");
+    }
+
+    size_t size = this->get_str(); // Получаем размер (например, 3 для матрицы 3х3)
+
+    // Шаг 2: БАЗА (Самый низ матрешки)
+    // Если матрица 1х1 — определитель равен этому единственному числу
+    if (size == 1) {
+        return this->sh(0, 0);
+    }
+
+    // Если матрица 2х2 — считаем по простой формуле "крест-накрест" (ad - bc)
+    if (size == 2) {
+        double main_diagonal = this->sh(0, 0) * this->sh(1, 1); // Главная (левый верх - правый низ)
+        double side_diagonal = this->sh(0, 1) * this->sh(1, 0); // Побочная (правый верх - левый низ)
+        return main_diagonal - side_diagonal; 
+    }
+
+    // Шаг 3: РЕКУРСИЯ (Разбиваем большую матрицу)
+    // Если матрица 3х3, 4х4 и больше — раскладываем её по первой строке
+    double total_det = 0.0;
+    double sign = 1.0; // Знаки у элементов всегда чередуются: плюс, минус, плюс, минус...
+
+    for (size_t j = 0; j < size; ++j) {
+        // 1. Берем число из первой строки: это всегда строка 0, столбец j
+        double current_element = this->sh(0, j);
+
+        // 2. Получаем «вырезанную» матрицу-минор (удаляем строку 0 и текущий столбец j)
+        matrix smaller_matrix = this->get_minor_matrix(0, j);
+
+        // 3. Считаем определитель этой маленькой матрицы (матрешка открывается дальше)
+        double smaller_det = smaller_matrix.determinant();
+
+        // 4. Складываем всё в общую копилку с учетом знака (+ или -)
+        total_det += sign * current_element * smaller_det;
+
+        // 5. Меняем знак для следующего элемента (был плюс — станет минус, и наоборот)
+        sign = -sign; 
+    }
+
+    return total_det; // Возвращаем итоговый ответ
+}
+double matrix::determinant() const {
+    // Шаг 1: Проверка на квадратность
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Определитель считается только для КВАДРАТНЫЙ матриц!");
+    }
+
+    size_t size = this->get_str();
+
+    // Шаг 2: БАЗОВЫЕ СЛУЧАИ (Остановка рекурсии)
+    
+    // Матрица 1х1
+    if (size == 1) {
+        return this->sh(0, 0);
+    }
+
+    // Матрица 2х2 (обычный "крест")
+    if (size == 2) {
+        return this->sh(0, 0) * this->sh(1, 1) - this->sh(0, 1) * this->sh(1, 0);
+    }
+
+    // Матрица 3х3 (Правило треугольников / Саррюса)
+    if (size == 3) {
+        // Главные диагонали и параллельные им треугольники (идут со знаком ПЛЮС)
+        double plus_elements = this->sh(0, 0) * this->sh(1, 1) * this->sh(2, 2) +
+                               this->sh(0, 1) * this->sh(1, 2) * this->sh(2, 0) +
+                               this->sh(1, 0) * this->sh(2, 1) * this->sh(0, 2);
+
+        // Побочные диагонали и параллельные им треугольники (идут со знаком МИНУС)
+        double minus_elements = this->sh(0, 2) * this->sh(1, 1) * this->sh(2, 0) +
+                                this->sh(0, 1) * this->sh(1, 0) * this->sh(2, 2) +
+                                this->sh(1, 2) * this->sh(2, 1) * this->sh(0, 0);
+
+        return plus_elements - minus_elements;
+    }
+
+    // Шаг 3: РЕКУРСИЯ (Для матриц 4х4, 5х5 и больше)
+    double total_det = 0.0;
+    double sign = 1.0; 
+
+    for (size_t j = 0; j < size; ++j) {
+        double current_element = this->sh(0, j);
+        
+        // Вырезаем минорную матрицу (она станет на 1 размер меньше)
+        matrix smaller_matrix = this->get_minor_matrix(0, j);
+
+        // Рекурсивный вызов (если матрица была 4х4, то smaller_matrix станет 3х3 
+        // и на следующем шаге мгновенно посчитается по формуле выше!)
+        double smaller_det = smaller_matrix.determinant();
+
+        total_det += sign * current_element * smaller_det;
+
+        sign = -sign; // Чередуем знак (+ , - , + , -)
+    }
+
+    return total_det;
+}
+
+
 #pragma once
 #include <iostream>
 #include <string>
