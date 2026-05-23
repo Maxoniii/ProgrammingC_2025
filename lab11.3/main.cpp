@@ -706,7 +706,398 @@ std::string to_lower(const std::string& s);
 std::string to_upper(const std::string& s);
 
 
+#include "matrix.hpp"
+#include <iomanip>
+
+// Конструкторы
+matrix::matrix() : str(0), slb(0) {}
+
+matrix::matrix(size_t n, size_t m) : str(n), slb(m) {
+    data.resize(n, std::vector<double>(m, 0.0));
+}
+
+matrix::matrix(const matrix& other) : str(other.str), slb(other.slb), data(other.data) {}
+
+// Операторы присваивания
+matrix& matrix::operator=(const matrix& other) {
+    if (this != &other) {
+        str = other.str;
+        slb = other.slb;
+        data = other.data;
+    }
+    return *this;
+}
+
+// Доступ к элементам
+double& matrix::operator()(size_t i, size_t j) {
+    if (i >= str || j >= slb) {
+        throw std::out_of_range("Индекс вне границ матрицы");
+    }
+    return data[i][j];
+}
+
+double matrix::operator()(size_t i, size_t j) const {
+    if (i >= str || j >= slb) {
+        throw std::out_of_range("Индекс вне границ матрицы");
+    }
+    return data[i][j];
+}
+
+// Геттеры
+size_t matrix::get_str() const { return str; }
+size_t matrix::get_slb() const { return slb; }
+
+double matrix::sh(size_t i, size_t j) const {
+    if (i >= str || j >= slb) {
+        throw std::out_of_range("Индекс вне границ матрицы");
+    }
+    return data[i][j];
+}
+
+// Ввод матрицы
+void matrix::input() {
+    std::cout << "Введите элементы матрицы " << str << "x" << slb << ":\n";
+    for (size_t i = 0; i < str; ++i) {
+        for (size_t j = 0; j < slb; ++j) {
+            std::cin >> data[i][j];
+        }
+    }
+}
+
+// Вывод матрицы
+void matrix::print() const {
+    for (size_t i = 0; i < str; ++i) {
+        for (size_t j = 0; j < slb; ++j) {
+            std::cout << std::setw(10) << std::setprecision(4) << data[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
+// Получение минорной матрицы (удаление строки row и столбца col)
+matrix matrix::get_minor_matrix(size_t row, size_t col) const {
+    if (str <= 1 || slb <= 1) {
+        throw std::logic_error("Нельзя получить минор из матрицы 1x1");
+    }
+    
+    matrix result(str - 1, slb - 1);
+    
+    size_t minor_i = 0;
+    for (size_t i = 0; i < str; ++i) {
+        if (i == row) continue;
+        
+        size_t minor_j = 0;
+        for (size_t j = 0; j < slb; ++j) {
+            if (j == col) continue;
+            result.data[minor_i][minor_j] = data[i][j];
+            minor_j++;
+        }
+        minor_i++;
+    }
+    
+    return result;
+}
+
+// Алгебраическое дополнение элемента (i,j)
+double matrix::algebraic_complement(size_t i, size_t j) const {
+    // Проверка на квадратность
+    if (str != slb) {
+        throw std::logic_error("Алгебраическое дополнение только для квадратных матриц");
+    }
+    
+    // Получаем минорную матрицу
+    matrix minor_matrix = get_minor_matrix(i, j);
+    
+    // Вычисляем минор (определитель минорной матрицы)
+    double minor = minor_matrix.determinant();
+    
+    // Алгебраическое дополнение с учётом знака (-1)^(i+j)
+    double sign = ((i + j) % 2 == 0) ? 1.0 : -1.0;
+    
+    return sign * minor;
+}
+
+// Вычисление определителя (ваша реализация с выводом)
+double matrix::determinant() const {
+    std::cout << "\n=== Вызов determinant() для матрицы размером " << str << "x" << slb << " ===\n";
+    
+    // Шаг 1: Проверка на квадратность
+    if (this->get_str() != this->get_slb()) {
+        throw std::logic_error("Определитель считается только для КВАДРАТНЫЙ матриц!");
+    }
+    
+    size_t size = this->get_str();
+    
+    // Выводим матрицу
+    std::cout << "Текущая матрица:\n";
+    this->print();
+    std::cout << std::endl;
+    
+    // Шаг 2: БАЗОВЫЕ СЛУЧАИ (Остановка рекурсии)
+    
+    // Матрица 1х1
+    if (size == 1) {
+        double result = this->sh(0, 0);
+        std::cout << "Базовый случай: матрица 1x1, определитель = " << result << "\n";
+        std::cout << "=== Возврат: " << result << " ===\n\n";
+        return result;
+    }
+    
+    // Матрица 2х2 (обычный "крест")
+    if (size == 2) {
+        double a = this->sh(0, 0), b = this->sh(0, 1);
+        double c = this->sh(1, 0), d = this->sh(1, 1);
+        double result = a * d - b * c;
+        std::cout << "Базовый случай: матрица 2x2\n";
+        std::cout << "det = (" << a << " * " << d << ") - (" << b << " * " << c << ") = " << result << "\n";
+        std::cout << "=== Возврат: " << result << " ===\n\n";
+        return result;
+    }
+    
+    // Матрица 3х3 (Правило треугольников / Саррюса)
+    if (size == 3) {
+        double a = this->sh(0,0), b = this->sh(0,1), c = this->sh(0,2);
+        double d = this->sh(1,0), e = this->sh(1,1), f = this->sh(1,2);
+        double g = this->sh(2,0), h = this->sh(2,1), i_elem = this->sh(2,2);
+        
+        double plus_elements = a * e * i_elem + b * f * g + d * h * c;
+        double minus_elements = c * e * g + b * d * i_elem + f * h * a;
+        double result = plus_elements - minus_elements;
+        
+        std::cout << "Базовый случай: матрица 3x3 (правило Саррюса)\n";
+        std::cout << "Плюс слагаемые: " << a << "*" << e << "*" << i_elem << " + " 
+                  << b << "*" << f << "*" << g << " + " << d << "*" << h << "*" << c 
+                  << " = " << plus_elements << "\n";
+        std::cout << "Минус слагаемые: " << c << "*" << e << "*" << g << " + "
+                  << b << "*" << d << "*" << i_elem << " + " << f << "*" << h << "*" << a
+                  << " = " << minus_elements << "\n";
+        std::cout << "det = " << plus_elements << " - " << minus_elements << " = " << result << "\n";
+        std::cout << "=== Возврат: " << result << " ===\n\n";
+        return result;
+    }
+    
+    // Шаг 3: РЕКУРСИЯ (Для матриц 4х4, 5х5 и больше)
+    std::cout << "Рекурсивный случай: разложение по первой строке\n";
+    std::cout << "Формула: det = Σ (-1)^(0+j) * a[0][j] * M[0][j]\n\n";
+    
+    double total_det = 0.0;
+    double sign = 1.0;
+    
+    for (size_t j = 0; j < size; ++j) {
+        double current_element = this->sh(0, j);
+        
+        std::cout << "--- Шаг " << j + 1 << " ---\n";
+        std::cout << "Элемент a[0][" << j << "] = " << current_element << "\n";
+        std::cout << "Знак: " << (sign > 0 ? "+" : "-") << "\n";
+        
+        // Вырезаем минорную матрицу
+        matrix smaller_matrix = this->get_minor_matrix(0, j);
+        std::cout << "Минорная матрица M[0][" << j << "] (удалены строка 0 и столбец " << j << "):\n";
+        smaller_matrix.print();
+        std::cout << "Рекурсивный вызов для минора...\n";
+        
+        // Рекурсивный вызов
+        double smaller_det = smaller_matrix.determinant();
+        
+        double term = sign * current_element * smaller_det;
+        total_det += term;
+        
+        std::cout << "Вклад в определитель: " << (sign > 0 ? "+" : "-") 
+                  << "(" << current_element << " * " << smaller_det << ") = " << term << "\n";
+        std::cout << "Текущая сумма = " << total_det << "\n\n";
+        
+        sign = -sign;
+    }
+    
+    std::cout << "=== Окончательный определитель = " << total_det << " ===\n\n";
+    return total_det;
+}
+
+// Демонстрация алгебраических дополнений
+void matrix::print_with_minors() const {
+    if (str != slb) {
+        std::cout << "Матрица не квадратная!\n";
+        return;
+    }
+    
+    std::cout << "\n=== АЛГЕБРАИЧЕСКИЕ ДОПОЛНЕНИЯ ===\n";
+    std::cout << "Исходная матрица:\n";
+    print();
+    
+    for (size_t i = 0; i < str; ++i) {
+        for (size_t j = 0; j < slb; ++j) {
+            double complement = algebraic_complement(i, j);
+            std::cout << "A[" << i << "][" << j << "] = ";
+            std::cout << "(-1)^(" << i << "+" << j << ") * M[" << i << "][" << j << "] = ";
+            double sign = ((i + j) % 2 == 0) ? 1.0 : -1.0;
+            std::cout << (sign > 0 ? "+" : "-") << " * " << abs(complement) << " = " << complement << "\n";
+        }
+    }
+}
+
+// Демонстрация полного процесса вычисления
+void matrix::print_determinant_details() const {
+    std::cout << "\n" << std::string(60, '=') << "\n";
+    std::cout << "ВЫЧИСЛЕНИЕ ОПРЕДЕЛИТЕЛЯ\n";
+    std::cout << std::string(60, '=') << "\n";
+    
+    try {
+        double det = determinant();
+        std::cout << "\n" << std::string(60, '-') << "\n";
+        std::cout << "ИТОГОВЫЙ РЕЗУЛЬТАТ: det = " << det << "\n";
+        std::cout << std::string(60, '-') << "\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Ошибка: " << e.what() << "\n";
+    }
+}
 
 
 
+
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
+
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+
+class matrix {
+private:
+    size_t str;  // количество строк
+    size_t slb;  // количество столбцов
+    std::vector<std::vector<double>> data;  // данные матрицы
+    
+public:
+    // Конструкторы
+    matrix();
+    matrix(size_t n, size_t m);
+    matrix(const matrix& other);
+    
+    // Деструктор
+    ~matrix() = default;
+    
+    // Операторы присваивания
+    matrix& operator=(const matrix& other);
+    
+    // Доступ к элементам
+    double& operator()(size_t i, size_t j);
+    double operator()(size_t i, size_t j) const;
+    
+    // Геттеры
+    size_t get_str() const;
+    size_t get_slb() const;
+    
+    // Доступ к элементу (ваш метод sh)
+    double sh(size_t i, size_t j) const;
+    
+    // Ввод/вывод
+    void input();
+    void print() const;
+    
+    // Получение минорной матрицы (удаление строки row и столбца col)
+    matrix get_minor_matrix(size_t row, size_t col) const;
+    
+    // Алгебраическое дополнение элемента (i,j)
+    double algebraic_complement(size_t i, size_t j) const;
+    
+    // Вычисление определителя
+    double determinant() const;
+    
+    // Дополнительные методы для демонстрации
+    void print_with_minors() const;
+    void print_determinant_details() const;
+};
+
+#endif
+
+
+#include "matrix.hpp"
+#include <iostream>
+#include <iomanip>
+
+void print_separator() {
+    std::cout << "\n" << std::string(70, '=') << "\n";
+}
+
+int main() {
+    std::cout << "ПРОГРАММА ДЛЯ ВЫЧИСЛЕНИЯ ОПРЕДЕЛИТЕЛЯ МАТРИЦ\n";
+    std::cout << "Демонстрация работы рекурсивного алгоритма через миноры\n";
+    
+    // ========== ТЕСТ 1: Матрица 1x1 ==========
+    print_separator();
+    std::cout << "ТЕСТ 1: Матрица 1x1\n";
+    matrix m1(1, 1);
+    m1(0, 0) = 5;
+    m1.print_determinant_details();
+    
+    // ========== ТЕСТ 2: Матрица 2x2 ==========
+    print_separator();
+    std::cout << "ТЕСТ 2: Матрица 2x2\n";
+    matrix m2(2, 2);
+    m2(0, 0) = 1; m2(0, 1) = 2;
+    m2(1, 0) = 3; m2(1, 1) = 4;
+    m2.print_determinant_details();
+    
+    // ========== ТЕСТ 3: Матрица 3x3 ==========
+    print_separator();
+    std::cout << "ТЕСТ 3: Матрица 3x3 (правило Саррюса)\n";
+    matrix m3(3, 3);
+    m3(0, 0) = 2; m3(0, 1) = -1; m3(0, 2) = 0;
+    m3(1, 0) = 1; m3(1, 1) = 3;  m3(1, 2) = 2;
+    m3(2, 0) = 4; m3(2, 1) = 0;  m3(2, 2) = -1;
+    m3.print_determinant_details();
+    
+    // Дополнительно: покажем алгебраические дополнения для матрицы 3x3
+    print_separator();
+    m3.print_with_minors();
+    
+    // ========== ТЕСТ 4: Матрица 4x4 (рекурсивный случай) ==========
+    print_separator();
+    std::cout << "ТЕСТ 4: Матрица 4x4 (рекурсивное разложение)\n";
+    matrix m4(4, 4);
+    m4(0, 0) = 1; m4(0, 1) = 2; m4(0, 2) = 0; m4(0, 3) = 1;
+    m4(1, 0) = 0; m4(1, 1) = 1; m4(1, 2) = 1; m4(1, 3) = 0;
+    m4(2, 0) = 1; m4(2, 1) = 0; m4(2, 2) = 2; m4(2, 3) = 1;
+    m4(3, 0) = 0; m4(3, 1) = 1; m4(3, 2) = 0; m4(3, 3) = 2;
+    m4.print_determinant_details();
+    
+    // ========== ТЕСТ 5: Матрица 4x4 (единичная) ==========
+    print_separator();
+    std::cout << "ТЕСТ 5: Единичная матрица 4x4 (определитель = 1)\n";
+    matrix m5(4, 4);
+    for (size_t i = 0; i < 4; ++i) {
+        m5(i, i) = 1;
+    }
+    m5.print_determinant_details();
+    
+    // ========== ТЕСТ 6: Ввод матрицы от пользователя ==========
+    print_separator();
+    std::cout << "ТЕСТ 6: Ввод матрицы пользователем\n";
+    size_t n;
+    std::cout << "Введите размер квадратной матрицы: ";
+    std::cin >> n;
+    
+    matrix user_matrix(n, n);
+    user_matrix.input();
+    user_matrix.print_determinant_details();
+    
+    // ========== Дополнительно: связь миноров и определителя ==========
+    print_separator();
+    std::cout << "ВАЖНОЕ ЗАМЕЧАНИЕ О СВЯЗИ МИНОРОВ И ОПРЕДЕЛИТЕЛЯ:\n";
+    std::cout << "Определитель матрицы можно вычислить как сумму произведений\n";
+    std::cout << "элементов любой строки на их алгебраические дополнения:\n\n";
+    std::cout << "det = Σ a[i][j] * A[i][j]\n";
+    std::cout << "где A[i][j] = (-1)^(i+j) * M[i][j], а M[i][j] - минор (определитель минорной матрицы)\n\n";
+    
+    std::cout << "В моей реализации:\n";
+    std::cout << "1. Для 1x1 и 2x2 - прямые формулы\n";
+    std::cout << "2. Для 3x3 - правило Саррюса\n";
+    std::cout << "3. Для 4x4 и больше - рекурсивное разложение по первой строке\n";
+    std::cout << "4. Каждый рекурсивный вызов уменьшает размерность матрицы\n";
+    std::cout << "5. Рекурсия доходит до базовых случаев 1x1, 2x2 или 3x3\n";
+    
+    std::cout << "\nПрограмма завершена.\n";
+    
+    return 0;
+}
 
